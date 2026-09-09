@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Value Sort — stylesheet
+   Value Sort stylesheet
    Dark by default, light on request or by system preference.
    ========================================================================== */
 
@@ -195,29 +195,6 @@ p { margin: 0; }
 /* -------------------------------- intro --------------------------------- */
 
 .hero h1 { font-size: clamp(1.9rem, 5.6vw, 2.75rem); margin-bottom: 0.75rem; }
-.lede { color: var(--text-dim); font-size: 1.05rem; max-width: 60ch; }
-.lede strong { color: var(--text); }
-
-.how {
-  list-style: none; margin: 2.25rem 0 0; padding: 0;
-  display: grid; gap: 0.7rem;
-}
-.how li {
-  background: var(--bg-elev); border: 1px solid var(--line-soft);
-  border-radius: var(--radius); padding: 1.05rem 1.15rem 1.15rem 3.2rem;
-  position: relative;
-}
-.how-num {
-  position: absolute; left: 1.05rem; top: 1.1rem;
-  width: 1.5rem; height: 1.5rem; border-radius: 50%;
-  background: var(--accent-wash); color: var(--accent);
-  display: grid; place-items: center;
-  font-size: 0.78rem; font-weight: 700;
-}
-.how h2 { font-size: 1rem; margin-bottom: 0.22rem; }
-.how p { color: var(--text-dim); font-size: 0.92rem; }
-.how em { color: var(--text); font-style: normal; font-weight: 600; }
-
 .start-form { margin-top: 2rem; }
 .field-label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 0.45rem; }
 .start-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
@@ -417,78 +394,24 @@ p { margin: 0; }
   display: flex; gap: 0.6rem; justify-content: flex-end; flex-wrap: wrap;
 }
 
-/* ------------------------------- ranking --------------------------------- */
-
-.rank-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
-
-.rank-row {
-  background: var(--bg-elev); border: 1px solid var(--line-soft);
-  border-radius: var(--radius-sm); padding: 0.7rem 0.8rem;
-  display: flex; align-items: center; gap: 0.75rem;
-  transition: border-color var(--step), opacity var(--step), transform var(--step);
-}
-.rank-row[data-dragging="true"] { opacity: 0.45; border-color: var(--accent); }
-.rank-row[data-over="true"] { border-color: var(--accent); transform: scale(1.012); }
-
-.rank-grip {
-  flex: none; cursor: grab; color: var(--text-faint);
-  background: transparent; border: 0; font: inherit; font-size: 1.05rem;
-  padding: 0.1rem 0.2rem; line-height: 1;
-}
-.rank-grip:active { cursor: grabbing; }
-
-.rank-num {
-  flex: none; width: 1.85rem; height: 1.85rem; border-radius: 50%;
-  background: var(--accent-wash); color: var(--accent);
-  display: grid; place-items: center;
-  font-size: 0.82rem; font-weight: 700; font-variant-numeric: tabular-nums;
-}
-.rank-row:first-child .rank-num { background: var(--accent); color: var(--accent-ink); }
-
-.rank-body { min-width: 0; flex: 1; }
-.rank-name { font-weight: 640; }
-.rank-desc { font-size: 0.83rem; color: var(--text-dim); }
-
-.rank-moves { flex: none; display: flex; flex-direction: column; gap: 2px; }
-.rank-moves button {
-  background: transparent; border: 1px solid var(--line); color: var(--text-dim);
-  border-radius: 6px; width: 1.7rem; height: 1.15rem; line-height: 1;
-  font-size: 0.62rem; cursor: pointer; padding: 0;
-  transition: color var(--step), border-color var(--step);
-}
-.rank-moves button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
-.rank-moves button:disabled { opacity: 0.3; cursor: not-allowed; }
-
 /* ------------------------------- results --------------------------------- */
 
 .results-head { margin-bottom: 1.6rem; }
 .results-head h1 { font-size: clamp(1.6rem, 4.6vw, 2.15rem); margin-bottom: 0.4rem; }
 
-.results-list { list-style: none; margin: 0 0 2rem; padding: 0; counter-reset: r; display: grid; gap: 0.45rem; }
+.results-list { list-style: none; margin: 0 0 2rem; padding: 0; display: grid; gap: 0.45rem; }
 .results-list li {
-  counter-increment: r;
   background: var(--bg-elev); border: 1px solid var(--line-soft);
-  border-radius: var(--radius-sm); padding: 0.8rem 0.95rem 0.8rem 3.35rem;
-  position: relative;
+  border-radius: var(--radius-sm); padding: 0.8rem 0.95rem;
 }
-.results-list li::before {
-  content: counter(r);
-  position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
-  width: 1.9rem; height: 1.9rem; border-radius: 50%;
-  background: var(--accent-wash); color: var(--accent);
-  display: grid; place-items: center;
-  font-size: 0.82rem; font-weight: 700; font-variant-numeric: tabular-nums;
-}
-.results-list li:first-child { border-color: var(--accent); }
-.results-list li:first-child::before { background: var(--accent); color: var(--accent-ink); }
 .results-list .rn { font-weight: 650; }
 .results-list .rd { font-size: 0.86rem; color: var(--text-dim); }
 
-.breakdown, .reflect {
+.breakdown {
   background: var(--bg-elev); border: 1px solid var(--line-soft);
   border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;
 }
-.breakdown h2, .reflect h2 { font-size: 1.05rem; margin-bottom: 0.35rem; }
+.breakdown h2 { font-size: 1.05rem; margin-bottom: 0.35rem; }
 .breakdown .muted { font-size: 0.87rem; }
 
 .bar-row { display: flex; align-items: center; gap: 0.7rem; margin-top: 0.7rem; }
@@ -496,17 +419,6 @@ p { margin: 0; }
 .bar-track { flex: 1; height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
 .bar-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 420ms ease; }
 .bar-n { flex: none; font-size: 0.82rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
-
-.insight {
-  margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid var(--line-soft);
-  font-size: 0.92rem; color: var(--text-dim);
-}
-.insight strong { color: var(--text); }
-
-.reflect ul { margin: 0.6rem 0 0; padding-left: 1.1rem; color: var(--text-dim); font-size: 0.92rem; }
-.reflect li { margin-bottom: 0.35rem; }
-
-.export-bar { display: flex; gap: 0.55rem; flex-wrap: wrap; margin-top: 1.5rem; }
 
 /* -------------------------------- toast ---------------------------------- */
 
@@ -537,10 +449,9 @@ p { margin: 0; }
 }
 
 @media print {
-  body::before, .topbar, .site-foot, .export-bar, .reflect, .toast, .skip-link { display: none !important; }
+  body::before, .topbar, .site-foot, .export-bar, .toast, .skip-link { display: none !important; }
   body { background: #fff; color: #000; }
   .wrap { max-width: none; padding: 0; }
   .results-list li, .breakdown { border: 1px solid #bbb; box-shadow: none; break-inside: avoid; }
-  .results-list li::before { background: #eee; color: #000; }
   .bar-fill { background: #666; }
 }

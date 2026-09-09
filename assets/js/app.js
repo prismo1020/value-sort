@@ -1,13 +1,16 @@
 /**
  * Value Sort
  * -----------------------------------------------------------------------------
- * A five-stage exercise that narrows 86 values down to a ranked top ten.
+ * A four-stage exercise that narrows 86 values down to a top ten.
  *
- *   intro -> sort (round 1) -> [rescue] -> filter (round 2) -> [select] -> rank -> results
+ *   intro -> sort (round 1) -> [rescue] -> filter (round 2) -> [select] -> results
  *
  * Bracketed stages are conditional. Everything runs client-side; the only
  * persistence is a single localStorage key holding value *names*, rehydrated
  * against the deck on load so the saved blob stays small and version-tolerant.
+ *
+ * The final ten carry no ranking. They are presented alphabetically so no
+ * order of importance is implied.
  */
 
 import { VALUES, BY_NAME } from "./values.js";
@@ -40,6 +43,10 @@ function shuffle(list) {
 const names = (list) => list.map((v) => v.name);
 const hydrate = (list) => (list || []).map((n) => BY_NAME[n]).filter(Boolean);
 
+/** The finished ten, alphabetical, since nothing here is ranked. */
+const finalTen = () =>
+  state.selected.slice().sort((a, b) => a.name.localeCompare(b.name));
+
 /* ================================= state ================================= */
 
 const blankState = () => ({
@@ -58,7 +65,6 @@ const blankState = () => ({
   filterHistory: [],
   pool: [],
   selected: [],
-  ranking: [],
 });
 
 let state = blankState();
@@ -84,7 +90,6 @@ function save() {
         less: names(state.less),
         pool: names(state.pool),
         selected: names(state.selected),
-        ranking: names(state.ranking),
         savedAt: Date.now(),
       })
     );
@@ -114,7 +119,6 @@ function loadSaved() {
       less: hydrate(d.less),
       pool: hydrate(d.pool),
       selected: hydrate(d.selected),
-      ranking: hydrate(d.ranking),
       savedAt: d.savedAt,
     };
   } catch {
@@ -132,15 +136,14 @@ const clearSaved = () => {
 
 /* ================================ chrome ================================= */
 
-const SCREENS = ["intro", "sort", "rescue", "filter", "select", "rank", "results"];
+const SCREENS = ["intro", "sort", "rescue", "filter", "select", "results"];
 
 const STEPS = [
   { key: "sort", label: "Sort" },
   { key: "filter", label: "Filter" },
   { key: "select", label: "Choose" },
-  { key: "rank", label: "Rank" },
 ];
-const STEP_ORDER = { sort: 0, rescue: 0, filter: 1, select: 2, rank: 3, results: 4 };
+const STEP_ORDER = { sort: 0, rescue: 0, filter: 1, select: 2, results: 3 };
 
 function buildStepper() {
   const list = $("stepperList");
@@ -319,7 +322,6 @@ function startFilter() {
   state.filterHistory = [];
   state.pool = [];
   state.selected = [];
-  state.ranking = [];
   renderFilter();
   show("filter", 0);
 }
@@ -388,7 +390,7 @@ function finishFilter() {
   if (n === TARGET) {
     // Exactly ten survived the filter: the choosing round has nothing to decide.
     state.selected = state.frustrating.slice();
-    return startRank();
+    return showResults();
   }
 
   if (n > TARGET) {
@@ -479,8 +481,8 @@ function paintSelect() {
     state.pool.length > TARGET && state.selected.length && short > 0
       ? "The values you said you would miss are already ticked. Add the rest from what is left."
       : n === TARGET
-        ? "Change any pick by unticking it, or move on to ranking."
-        : "Tick exactly ten — the ones you would defend if pushed.";
+        ? "Change any pick by unticking it, or move on to your results."
+        : "Tick exactly ten, the ones you would defend if pushed.";
 
   const pips = $("selectPips");
   pips.replaceChildren();
@@ -499,99 +501,17 @@ function paintSelect() {
   paintStepper(n / TARGET);
 }
 
-/* ================================ ranking ================================ */
-
-function startRank() {
-  if (!state.ranking.length || state.ranking.length !== state.selected.length) {
-    state.ranking = state.selected.slice();
-  }
-  renderRank();
-  show("rank", 0.5);
-}
-
-function moveRank(from, to) {
-  if (to < 0 || to >= state.ranking.length) return;
-  const [item] = state.ranking.splice(from, 1);
-  state.ranking.splice(to, 0, item);
-  renderRank();
-  save();
-  $("rankStatus").textContent = `${item.name} moved to position ${to + 1}`;
-}
-
-let dragFrom = null;
-
-function renderRank() {
-  const list = $("rankList");
-  list.replaceChildren();
-
-  state.ranking.forEach((value, i) => {
-    const li = el("li", "rank-row");
-    li.draggable = true;
-    li.dataset.index = String(i);
-
-    const grip = el("button", "rank-grip", "☰");
-    grip.type = "button";
-    grip.setAttribute("aria-hidden", "true");
-    grip.tabIndex = -1;
-
-    const body = el("div", "rank-body");
-    body.append(el("div", "rank-name", value.name), el("div", "rank-desc", value.description));
-
-    const moves = el("div", "rank-moves");
-    const up = el("button", null, "▲");
-    up.type = "button";
-    up.disabled = i === 0;
-    up.setAttribute("aria-label", `Move ${value.name} up`);
-    up.addEventListener("click", () => moveRank(i, i - 1));
-
-    const down = el("button", null, "▼");
-    down.type = "button";
-    down.disabled = i === state.ranking.length - 1;
-    down.setAttribute("aria-label", `Move ${value.name} down`);
-    down.addEventListener("click", () => moveRank(i, i + 1));
-
-    moves.append(up, down);
-    li.append(grip, el("div", "rank-num", String(i + 1)), body, moves);
-
-    li.addEventListener("dragstart", (e) => {
-      dragFrom = i;
-      li.dataset.dragging = "true";
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", String(i));
-    });
-    li.addEventListener("dragend", () => {
-      dragFrom = null;
-      delete li.dataset.dragging;
-      for (const row of list.children) delete row.dataset.over;
-    });
-    li.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
-      if (dragFrom !== null && dragFrom !== i) li.dataset.over = "true";
-    });
-    li.addEventListener("dragleave", () => delete li.dataset.over);
-    li.addEventListener("drop", (e) => {
-      e.preventDefault();
-      delete li.dataset.over;
-      const from = dragFrom ?? Number(e.dataTransfer.getData("text/plain"));
-      if (Number.isInteger(from) && from !== i) moveRank(from, i);
-    });
-
-    list.append(li);
-  });
-}
-
 /* ================================ results ================================ */
 
 function showResults() {
   const who = state.name.trim();
   $("resultsSub").textContent = who
-    ? `${who}, in your own order of importance.`
-    : "In your own order of importance.";
+    ? `${who}, these are yours in no particular order.`
+    : "In no particular order.";
 
   const list = $("resultsList");
   list.replaceChildren();
-  for (const value of state.ranking) {
+  for (const value of finalTen()) {
     const li = el("li");
     li.append(el("div", "rn", value.name), el("div", "rd", value.description));
     list.append(li);
@@ -601,11 +521,15 @@ function showResults() {
   show("results", 1);
 }
 
-function renderBreakdown() {
+/** Theme -> count, busiest first. Shared by the screen and both exports. */
+function clusterCounts() {
   const counts = new Map();
-  for (const v of state.ranking) counts.set(v.category, (counts.get(v.category) || 0) + 1);
+  for (const v of finalTen()) counts.set(v.category, (counts.get(v.category) || 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+}
 
-  const rows = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+function renderBreakdown() {
+  const rows = clusterCounts();
   const max = rows.length ? rows[0][1] : 1;
 
   const host = $("breakdownBars");
@@ -619,34 +543,27 @@ function renderBreakdown() {
     row.append(el("div", "bar-name", cat), track, el("div", "bar-n", String(n)));
     host.append(row);
   }
-
-  const [topCat, topN] = rows[0] || ["", 0];
-  const spread = rows.length;
-  $("insight").innerHTML =
-    spread <= 3
-      ? `Your ten cluster tightly into <strong>${plural(spread, "theme", "themes")}</strong>, led by <strong>${topCat}</strong>. ` +
-        `A focused profile like this makes decisions easier, but check that nothing important got crowded out.`
-      : topN >= 4
-        ? `<strong>${topCat}</strong> carries ${topN} of your ten — a clear centre of gravity, balanced across ` +
-          `${plural(spread, "theme", "themes")} in total.`
-        : `Your ten spread across <strong>${plural(spread, "theme", "themes")}</strong> with no single one dominating. ` +
-          `A broad profile like this reads as balance, though it can make trade-offs harder when two pull apart.`;
 }
 
 /* ------------------------------- exporting -------------------------------- */
 
 function resultsMarkdown() {
-  const who = state.name.trim() || "Anonymous";
-  const lines = [
-    `# Core values — ${who}`,
+  const who = state.name.trim();
+  return [
+    who ? `# Core values (${who})` : "# Core values",
     "",
-    "| # | Value | What it means |",
-    "| --- | --- | --- |",
-    ...state.ranking.map((v, i) => `| ${i + 1} | ${v.name} | ${v.description} |`),
+    "| Value | What it means |",
+    "| --- | --- |",
+    ...finalTen().map((v) => `| ${v.name} | ${v.description} |`),
+    "",
+    "## Where your values cluster",
+    "",
+    "| Theme | Count |",
+    "| --- | --- |",
+    ...clusterCounts().map(([cat, n]) => `| ${cat} | ${n} |`),
     "",
     `_Completed ${new Date().toLocaleDateString()} with the Value Sort exercise._`,
-  ];
-  return lines.join("\n");
+  ].join("\n");
 }
 
 async function copyResults() {
@@ -664,7 +581,7 @@ async function copyResults() {
     ta.select();
     const ok = document.execCommand("copy");
     ta.remove();
-    toast(ok ? "Copied to clipboard" : "Copy failed — select the list and copy manually");
+    toast(ok ? "Copied to clipboard" : "Copy failed. Select the list and copy manually.");
   }
   $("exportStatus").textContent = "Results copied.";
 }
@@ -674,12 +591,13 @@ function downloadResults() {
   const payload = {
     name: who || null,
     completedAt: new Date().toISOString(),
-    topTen: state.ranking.map((v, i) => ({
-      rank: i + 1,
+    note: "The ten values are unranked and listed alphabetically.",
+    topTen: finalTen().map((v) => ({
       name: v.name,
       description: v.description,
       category: v.category,
     })),
+    clusters: Object.fromEntries(clusterCounts()),
   };
   const slug = (who || "value-sort").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const url = URL.createObjectURL(
@@ -743,7 +661,7 @@ function offerResume() {
     rescue: "Round 1, choosing a few more keepers",
     filter: "Round 2, the emotional filter",
     select: "Round 3, choosing your ten",
-    rank: "the final ranking",
+    results: "your results",
   };
   const when = saved.savedAt ? new Date(saved.savedAt).toLocaleString() : null;
   $("resumeDetail").textContent =
@@ -770,9 +688,6 @@ function offerResume() {
         break;
       case "select":
         openSelect();
-        break;
-      case "rank":
-        startRank();
         break;
       case "results":
         showResults();
@@ -830,17 +745,8 @@ function init() {
     }
   });
   $("selectContinue").addEventListener("click", () => {
-    if (state.selected.length === TARGET) {
-      state.ranking = state.selected.slice();
-      startRank();
-    }
+    if (state.selected.length === TARGET) showResults();
   });
-
-  $("rankBack").addEventListener("click", () => {
-    if (state.pool.length) openSelect();
-    else startFilter();
-  });
-  $("rankFinish").addEventListener("click", showResults);
 
   $("copyBtn").addEventListener("click", copyResults);
   $("downloadBtn").addEventListener("click", downloadResults);

@@ -1,12 +1,12 @@
 # Value Sort
 
-A guided values-clarification exercise. It narrows a deck of **86 values** down to
-the ten that genuinely drive you, then puts those ten in order.
+A guided values clarification exercise. It narrows a deck of **86 values** down to
+the ten that genuinely drive you.
 
 Everything runs in the browser. No build step, no framework, no dependencies, no
 backend, no analytics, no network calls of any kind.
 
-**[Try it &rarr;](https://prismo1020.github.io/value-sort/)**
+**[Try it](https://prismo1020.github.io/value-sort/)**
 
 ---
 
@@ -15,13 +15,15 @@ backend, no analytics, no network calls of any kind.
 | Stage | What happens | Gate |
 | --- | --- | --- |
 | **1. Sort** | Every value in a shuffled deck goes into one of three piles: *This is me*, *Meh*, *Not me*. | At least 10 keepers to continue |
-| **2. Filter** | The keepers come back one at a time. Mark the ones you would genuinely miss if they were absent. | — |
+| **2. Filter** | The keepers come back one at a time. Mark the ones you would genuinely miss if they were absent. | none |
 | **3. Choose** | Narrow the survivors to exactly ten. | Exactly 10 |
-| **4. Rank** | Order the ten by importance. | — |
-| **Results** | Your ranked list, a breakdown of the themes they cluster into, and export options. | — |
+| **Results** | Your ten values, plus a breakdown of the themes they cluster into, and export options. | none |
 
-Stage 3 is skipped automatically when exactly ten values survive the filter —
-there is nothing left to decide.
+Stage 3 is skipped automatically when exactly ten values survive the filter,
+since there is nothing left to decide.
+
+The final ten are **not ranked**. They are shown alphabetically so that no order
+of importance is implied.
 
 ### Why two rounds before choosing
 
@@ -39,8 +41,8 @@ It is a static site, so any file server works:
 npx serve .
 ```
 
-Then open the printed URL. A plain `file://` open will **not** work — the app uses
-ES modules, which browsers block over the file protocol.
+Then open the printed URL. A plain `file://` open will **not** work, because the
+app uses ES modules, which browsers block over the file protocol.
 
 ### Deploying
 
@@ -75,15 +77,12 @@ kept; the implementation and the rough edges are not.
 **The results say more**
 - Every value carries a theme (Character, Growth, Relationships, and so on). The
   original loaded that field and never used it. The results screen now shows how
-  your top ten cluster, with a short read on what the shape suggests.
-- Reflection prompts, so the exercise ends with a thought rather than a list.
+  your top ten cluster, and that breakdown is included in both exports.
 - Export as Markdown to the clipboard, as JSON, or via a proper print stylesheet.
 
 **Correctness and accessibility**
 - The shuffle uses Fisher-Yates. The original used `sort(() => Math.random() - 0.5)`,
   which is measurably biased.
-- Ranking works by drag, by arrow buttons, and by keyboard. The original was
-  HTML5 drag-and-drop only, which is effectively unusable on touch devices.
 - Semantic buttons, ARIA live regions, visible focus rings, `prefers-reduced-motion`,
   and a skip link.
 - Light and dark themes that follow the system by default.
@@ -91,14 +90,15 @@ kept; the implementation and the rough edges are not.
   and `10/10selected`.
 
 **Smaller**
-- ~600 KB of JavaScript across ten chunks became three files and no dependencies.
+- Roughly 600 KB of JavaScript across ten chunks became three files and no
+  dependencies.
 
 ---
 
 ## Project layout
 
 ```
-index.html              markup for all seven screens
+index.html              markup for all six screens
 assets/css/styles.css   theming, layout, print styles
 assets/js/values.js     the 86-value deck
 assets/js/app.js        state machine, persistence, rendering
@@ -106,16 +106,16 @@ assets/js/app.js        state machine, persistence, rendering
 
 ### Editing the deck
 
-`assets/js/values.js` is a plain array. Add, remove, or reword entries freely —
-nothing is hard-coded to a count of 86. Keep `TARGET` in `app.js` below the size
-of the smallest pile you expect anyone to finish round 1 with.
+`assets/js/values.js` is a plain array. Add, remove, or reword entries freely,
+since nothing is hard-coded to a count of 86. Keep `TARGET` in `app.js` below the
+size of the smallest pile you expect anyone to finish round 1 with.
 
 ---
 
 ## Privacy
 
-Nothing leaves the device. The only storage is two `localStorage` keys — one for
-in-progress answers, one for the theme preference — both cleared by *Start over*.
+Nothing leaves the device. The only storage is two `localStorage` keys, one for
+in-progress answers and one for the theme preference, both cleared by *Start over*.
 
 ## License
 

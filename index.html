@@ -36,33 +36,10 @@
     <div class="hero">
       <p class="eyebrow">A values clarification exercise</p>
       <h1 id="introTitle">What actually drives you?</h1>
-      <p class="lede">
-        Most of us can name a dozen things we care about. Far fewer can name the
-        handful we would not trade away. This exercise narrows <strong>86 values</strong>
-        down to the ten that genuinely belong to you &mdash; then puts them in order.
-      </p>
     </div>
 
-    <ol class="how">
-      <li>
-        <span class="how-num">1</span>
-        <h2>Sort the deck</h2>
-        <p>Every value goes into one of three piles: <em>This is me</em>, <em>Meh</em>, or <em>Not me</em>. Move fast and trust your gut.</p>
-      </li>
-      <li>
-        <span class="how-num">2</span>
-        <h2>Apply the emotional filter</h2>
-        <p>Revisit your keepers and mark the ones whose absence would genuinely frustrate you. Wanting is cheap; missing it is the real test.</p>
-      </li>
-      <li>
-        <span class="how-num">3</span>
-        <h2>Choose and rank ten</h2>
-        <p>Narrow to exactly ten, then order them. Number one is the value you would defend last.</p>
-      </li>
-    </ol>
-
     <form class="start-form" id="startForm" novalidate>
-      <label class="field-label" for="nameInput">Your name <span class="muted">(optional &mdash; it only labels your results)</span></label>
+      <label class="field-label" for="nameInput">Your name <span class="muted">(optional, it only labels your results)</span></label>
       <div class="start-row">
         <input class="text-input" type="text" id="nameInput" name="name" placeholder="Your name" autocomplete="name" maxlength="60" />
         <button class="btn btn-primary" type="submit">Begin exercise</button>
@@ -90,7 +67,7 @@
     <div class="round-head">
       <p class="eyebrow">Round 1 &middot; The three-pile sort</p>
       <h1 id="sortTitle">Does this sound like you?</h1>
-      <p class="round-sub">There are no wrong answers and no time limit &mdash; but your first instinct is usually the honest one.</p>
+      <p class="round-sub">There are no wrong answers and no time limit, but your first instinct is usually the honest one.</p>
     </div>
 
     <div class="progress" role="group" aria-labelledby="sortProgressLabel">
@@ -140,7 +117,7 @@
       <p class="round-sub" id="rescueSub"></p>
     </div>
     <p class="hint">
-      No need to redo the round. Here are the values you set aside &mdash; promote any that
+      No need to redo the round. Here are the values you set aside, so promote any that
       deserve a second look.
     </p>
     <div class="list-scroll" id="rescueList" role="group" aria-label="Set-aside values"></div>
@@ -210,24 +187,7 @@
 
     <div class="sticky-actions">
       <button type="button" class="btn btn-ghost" id="selectBack">Back</button>
-      <button type="button" class="btn btn-primary" id="selectContinue" disabled>Continue to ranking</button>
-    </div>
-  </section>
-
-  <!-- =========================== RANKING =============================== -->
-  <section class="screen" id="screen-rank" aria-labelledby="rankTitle" hidden>
-    <div class="round-head">
-      <p class="eyebrow">Final step &middot; Put them in order</p>
-      <h1 id="rankTitle">Which one wins?</h1>
-      <p class="round-sub">Drag a row, or use the arrows. Number one is the value you would give up last.</p>
-    </div>
-
-    <ol class="rank-list" id="rankList"></ol>
-    <p class="sr-only" role="status" id="rankStatus"></p>
-
-    <div class="sticky-actions">
-      <button type="button" class="btn btn-ghost" id="rankBack">Back</button>
-      <button type="button" class="btn btn-primary" id="rankFinish">See my results</button>
+      <button type="button" class="btn btn-primary" id="selectContinue" disabled>See my results</button>
     </div>
   </section>
 
@@ -239,22 +199,12 @@
       <p class="round-sub" id="resultsSub"></p>
     </div>
 
-    <ol class="results-list" id="resultsList"></ol>
+    <ul class="results-list" id="resultsList"></ul>
 
     <section class="breakdown" aria-labelledby="breakdownTitle">
       <h2 id="breakdownTitle">Where your values cluster</h2>
-      <p class="muted">Each value belongs to a broader theme. The shape of your top ten says as much as the list itself.</p>
+      <p class="muted">Each value belongs to a broader theme.</p>
       <div id="breakdownBars"></div>
-      <p class="insight" id="insight"></p>
-    </section>
-
-    <section class="reflect" aria-labelledby="reflectTitle">
-      <h2 id="reflectTitle">Sit with it for a minute</h2>
-      <ul>
-        <li>Which of these ten would surprise someone who knows you well?</li>
-        <li>Look at your number one. When did you last make a decision that honoured it?</li>
-        <li>Which value did you cut at the very end &mdash; and does letting it go still bother you?</li>
-      </ul>
     </section>
 
     <div class="export-bar">
