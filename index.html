@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Value Sort</title>
+<meta name="description" content="A guided exercise that narrows 86 values down to the ten that actually drive you." />
+<meta name="color-scheme" content="dark light" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127919;</text></svg>" />
+<link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="wordmark" aria-hidden="true">&#9670;</span>
+    <span class="wordmark-text">Value Sort</span>
+    <div class="topbar-actions">
+      <button type="button" id="themeBtn" class="icon-btn" aria-label="Switch colour theme" title="Switch colour theme">
+        <span data-theme-icon>&#9789;</span>
+      </button>
+      <button type="button" id="restartBtn" class="icon-btn" hidden>Start over</button>
+    </div>
+  </div>
+  <div class="stepper" id="stepper" hidden>
+    <ol class="stepper-list" id="stepperList"></ol>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <!-- ============================== INTRO ============================== -->
+  <section class="screen" id="screen-intro" aria-labelledby="introTitle">
+    <div class="hero">
+      <p class="eyebrow">A values clarification exercise</p>
+      <h1 id="introTitle">What actually drives you?</h1>
+      <p class="lede">
+        Most of us can name a dozen things we care about. Far fewer can name the
+        handful we would not trade away. This exercise narrows <strong>86 values</strong>
+        down to the ten that genuinely belong to you &mdash; then puts them in order.
+      </p>
+    </div>
+
+    <ol class="how">
+      <li>
+        <span class="how-num">1</span>
+        <h2>Sort the deck</h2>
+        <p>Every value goes into one of three piles: <em>This is me</em>, <em>Meh</em>, or <em>Not me</em>. Move fast and trust your gut.</p>
+      </li>
+      <li>
+        <span class="how-num">2</span>
+        <h2>Apply the emotional filter</h2>
+        <p>Revisit your keepers and mark the ones whose absence would genuinely frustrate you. Wanting is cheap; missing it is the real test.</p>
+      </li>
+      <li>
+        <span class="how-num">3</span>
+        <h2>Choose and rank ten</h2>
+        <p>Narrow to exactly ten, then order them. Number one is the value you would defend last.</p>
+      </li>
+    </ol>
+
+    <form class="start-form" id="startForm" novalidate>
+      <label class="field-label" for="nameInput">Your name <span class="muted">(optional &mdash; it only labels your results)</span></label>
+      <div class="start-row">
+        <input class="text-input" type="text" id="nameInput" name="name" placeholder="Your name" autocomplete="name" maxlength="60" />
+        <button class="btn btn-primary" type="submit">Begin exercise</button>
+      </div>
+      <p class="fineprint">
+        Runs entirely in your browser. Nothing is uploaded, and your progress is saved
+        on this device so you can close the tab and pick up where you left off.
+      </p>
+    </form>
+
+    <div class="resume-card" id="resumeCard" hidden>
+      <div>
+        <strong>You have an exercise in progress.</strong>
+        <span class="muted" id="resumeDetail"></span>
+      </div>
+      <div class="resume-actions">
+        <button type="button" class="btn btn-primary" id="resumeBtn">Resume</button>
+        <button type="button" class="btn btn-ghost" id="discardBtn">Discard</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= ROUND 1: SORT =========================== -->
+  <section class="screen" id="screen-sort" aria-labelledby="sortTitle" hidden>
+    <div class="round-head">
+      <p class="eyebrow">Round 1 &middot; The three-pile sort</p>
+      <h1 id="sortTitle">Does this sound like you?</h1>
+      <p class="round-sub">There are no wrong answers and no time limit &mdash; but your first instinct is usually the honest one.</p>
+    </div>
+
+    <div class="progress" role="group" aria-labelledby="sortProgressLabel">
+      <div class="progress-meta">
+        <span id="sortProgressLabel">Card <strong id="sortPos">1</strong> of <strong id="sortTotal">86</strong></span>
+        <span class="muted" id="sortRemaining"></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="sortFill"></div>
+      </div>
+    </div>
+
+    <div class="card-stage">
+      <article class="value-card" id="sortCard" aria-live="polite">
+        <p class="value-cat" id="sortCat"></p>
+        <h2 class="value-name" id="sortName"></h2>
+        <p class="value-desc" id="sortDesc"></p>
+      </article>
+    </div>
+
+    <div class="choices choices-3">
+      <button type="button" class="btn btn-choice choice-yes" data-pile="me">
+        <span class="choice-label">This is me</span>
+        <kbd>&rarr;</kbd>
+      </button>
+      <button type="button" class="btn btn-choice choice-mid" data-pile="meh">
+        <span class="choice-label">Meh / not sure</span>
+        <kbd>&darr;</kbd>
+      </button>
+      <button type="button" class="btn btn-choice choice-no" data-pile="notMe">
+        <span class="choice-label">Not me at all</span>
+        <kbd>&larr;</kbd>
+      </button>
+    </div>
+
+    <div class="round-foot">
+      <button type="button" class="btn btn-ghost" id="sortUndo" disabled>&#8592; Undo</button>
+      <p class="tally" id="sortTally"></p>
+    </div>
+  </section>
+
+  <!-- ===================== ROUND 1 SHORTFALL RESCUE ==================== -->
+  <section class="screen" id="screen-rescue" aria-labelledby="rescueTitle" hidden>
+    <div class="round-head">
+      <p class="eyebrow">Almost there</p>
+      <h1 id="rescueTitle">You need a few more keepers</h1>
+      <p class="round-sub" id="rescueSub"></p>
+    </div>
+    <p class="hint">
+      No need to redo the round. Here are the values you set aside &mdash; promote any that
+      deserve a second look.
+    </p>
+    <div class="list-scroll" id="rescueList" role="group" aria-label="Set-aside values"></div>
+    <div class="sticky-actions">
+      <button type="button" class="btn btn-ghost" id="rescueRedo">Redo round 1</button>
+      <button type="button" class="btn btn-primary" id="rescueContinue" disabled>Continue</button>
+    </div>
+  </section>
+
+  <!-- ======================== ROUND 2: FILTER ========================== -->
+  <section class="screen" id="screen-filter" aria-labelledby="filterTitle" hidden>
+    <div class="round-head">
+      <p class="eyebrow">Round 2 &middot; The emotional filter</p>
+      <h1 id="filterTitle">What would you actually miss?</h1>
+      <p class="round-sub">Picture this value absent from your life. If that thought stings, it belongs in the second pile.</p>
+    </div>
+
+    <div class="progress" role="group" aria-labelledby="filterProgressLabel">
+      <div class="progress-meta">
+        <span id="filterProgressLabel">Card <strong id="filterPos">1</strong> of <strong id="filterTotal">0</strong></span>
+        <span class="muted" id="filterRemaining"></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="filterFill"></div>
+      </div>
+    </div>
+
+    <div class="card-stage">
+      <article class="value-card" id="filterCard" aria-live="polite">
+        <p class="value-cat" id="filterCat"></p>
+        <h2 class="value-name" id="filterName"></h2>
+        <p class="value-desc" id="filterDesc"></p>
+      </article>
+    </div>
+
+    <div class="choices choices-2">
+      <button type="button" class="btn btn-choice choice-yes" data-filter="frustrating">
+        <span class="choice-label">I would miss this</span>
+        <kbd>&rarr;</kbd>
+      </button>
+      <button type="button" class="btn btn-choice choice-no" data-filter="less">
+        <span class="choice-label">Less important</span>
+        <kbd>&larr;</kbd>
+      </button>
+    </div>
+
+    <div class="round-foot">
+      <button type="button" class="btn btn-ghost" id="filterUndo" disabled>&#8592; Undo</button>
+      <p class="tally" id="filterTally"></p>
+    </div>
+  </section>
+
+  <!-- ======================== ROUND 3: SELECT ========================== -->
+  <section class="screen" id="screen-select" aria-labelledby="selectTitle" hidden>
+    <div class="round-head">
+      <p class="eyebrow" id="selectEyebrow">Round 3 &middot; Choose your ten</p>
+      <h1 id="selectTitle">Narrow it to ten</h1>
+      <p class="round-sub" id="selectSub"></p>
+    </div>
+
+    <div class="select-meter">
+      <div class="pips" id="selectPips" aria-hidden="true"></div>
+      <p class="select-count"><strong id="selectCount">0</strong> of 10 selected</p>
+    </div>
+
+    <div class="list-scroll" id="selectList" role="group" aria-label="Your remaining values"></div>
+
+    <div class="sticky-actions">
+      <button type="button" class="btn btn-ghost" id="selectBack">Back</button>
+      <button type="button" class="btn btn-primary" id="selectContinue" disabled>Continue to ranking</button>
+    </div>
+  </section>
+
+  <!-- =========================== RANKING =============================== -->
+  <section class="screen" id="screen-rank" aria-labelledby="rankTitle" hidden>
+    <div class="round-head">
+      <p class="eyebrow">Final step &middot; Put them in order</p>
+      <h1 id="rankTitle">Which one wins?</h1>
+      <p class="round-sub">Drag a row, or use the arrows. Number one is the value you would give up last.</p>
+    </div>
+
+    <ol class="rank-list" id="rankList"></ol>
+    <p class="sr-only" role="status" id="rankStatus"></p>
+
+    <div class="sticky-actions">
+      <button type="button" class="btn btn-ghost" id="rankBack">Back</button>
+      <button type="button" class="btn btn-primary" id="rankFinish">See my results</button>
+    </div>
+  </section>
+
+  <!-- =========================== RESULTS =============================== -->
+  <section class="screen" id="screen-results" aria-labelledby="resultsTitle" hidden>
+    <div class="results-head">
+      <p class="eyebrow">Your core values</p>
+      <h1 id="resultsTitle">These are the ten that drive you</h1>
+      <p class="round-sub" id="resultsSub"></p>
+    </div>
+
+    <ol class="results-list" id="resultsList"></ol>
+
+    <section class="breakdown" aria-labelledby="breakdownTitle">
+      <h2 id="breakdownTitle">Where your values cluster</h2>
+      <p class="muted">Each value belongs to a broader theme. The shape of your top ten says as much as the list itself.</p>
+      <div id="breakdownBars"></div>
+      <p class="insight" id="insight"></p>
+    </section>
+
+    <section class="reflect" aria-labelledby="reflectTitle">
+      <h2 id="reflectTitle">Sit with it for a minute</h2>
+      <ul>
+        <li>Which of these ten would surprise someone who knows you well?</li>
+        <li>Look at your number one. When did you last make a decision that honoured it?</li>
+        <li>Which value did you cut at the very end &mdash; and does letting it go still bother you?</li>
+      </ul>
+    </section>
+
+    <div class="export-bar">
+      <button type="button" class="btn btn-primary" id="copyBtn">Copy results</button>
+      <button type="button" class="btn btn-ghost" id="downloadBtn">Download</button>
+      <button type="button" class="btn btn-ghost" id="printBtn">Print</button>
+      <button type="button" class="btn btn-ghost" id="againBtn">Start over</button>
+    </div>
+    <p class="sr-only" role="status" id="exportStatus"></p>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <p>Runs offline in your browser. Nothing is collected, stored remotely, or sent anywhere.</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
