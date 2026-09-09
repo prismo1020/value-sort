@@ -1,6 +1,6 @@
 # Value Sort
 
-A guided values clarification exercise. It narrows a deck of **86 values** down to
+A guided values clarification exercise. It narrows a deck of **62 values** down to
 the ten that genuinely drive you.
 
 Everything runs in the browser. No build step, no framework, no dependencies, no
@@ -61,11 +61,11 @@ kept; the implementation and the rough edges are not.
 - The original held everything in React state and dropped it on refresh. This one
   autosaves to `localStorage` after every card and offers to resume.
 - **Undo** in both card rounds. Previously a single misclick was unrecoverable
-  86 cards deep.
+  dozens of cards deep.
 
 **The failure path no longer punishes you**
 - The original fired a native `alert()` when you finished round 1 with fewer than
-  ten keepers, then threw away all 86 answers and restarted with a fresh shuffle.
+  ten keepers, then threw away every answer and restarted with a fresh shuffle.
 - Now you get a recovery screen listing what you set aside, and you promote a few
   to reach ten. Redoing the round is still offered, but it is a choice.
 
@@ -89,6 +89,16 @@ kept; the implementation and the rough edges are not.
 - Fixed two string-concatenation bugs that rendered as `12in "This is Me" pile`
   and `10/10selected`.
 
+**A tighter deck**
+- The original deck ran to 86 cards, many of which were the same idea worded
+  twice: *Acceptance* next to *Self-Acceptance*, *Loved* next to *Loving*,
+  *Health* next to *Fitness*, *Authority* next to *Power*. Sorting near-synonyms
+  is fatigue, not insight.
+- The deck is now **62**. Twenty-four cards were folded into the card they
+  duplicated, and every merged entry records what it absorbed in its `merged`
+  field, so nothing was silently dropped. A few labels were also clarified
+  (*Industry* became *Hard Work*, *Virtue* became *Integrity*).
+
 **Smaller**
 - Roughly 600 KB of JavaScript across ten chunks became three files and no
   dependencies.
@@ -100,14 +110,14 @@ kept; the implementation and the rough edges are not.
 ```
 index.html              markup for all six screens
 assets/css/styles.css   theming, layout, print styles
-assets/js/values.js     the 86-value deck
+assets/js/values.js     the 62-value deck
 assets/js/app.js        state machine, persistence, rendering
 ```
 
 ### Editing the deck
 
 `assets/js/values.js` is a plain array. Add, remove, or reword entries freely,
-since nothing is hard-coded to a count of 86. Keep `TARGET` in `app.js` below the
+since nothing is hard-coded to a fixed count. Keep `TARGET` in `app.js` below the
 size of the smallest pile you expect anyone to finish round 1 with.
 
 ---

@@ -1,7 +1,7 @@
 /**
  * Value Sort
  * -----------------------------------------------------------------------------
- * A four-stage exercise that narrows 86 values down to a top ten.
+ * A four-stage exercise that narrows 62 values down to a top ten.
  *
  *   intro -> sort (round 1) -> [rescue] -> filter (round 2) -> [select] -> results
  *
