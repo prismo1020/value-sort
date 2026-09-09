@@ -54,6 +54,8 @@ would be served correctly if any are added later.
 
 ## What is different from the version this replaces
 
+For the short, plain-language version, see [CHANGELOG.md](CHANGELOG.md).
+
 This is a rewrite of an earlier React/Next.js prototype. The exercise design is
 kept; the implementation and the rough edges are not.
 
