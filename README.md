@@ -52,58 +52,9 @@ would be served correctly if any are added later.
 
 ---
 
-## What is different from the version this replaces
+## What is different from the original
 
-For the short, plain-language version, see [CHANGELOG.md](CHANGELOG.md).
-
-This is a rewrite of an earlier React/Next.js prototype. The exercise design is
-kept; the implementation and the rough edges are not.
-
-**Progress is no longer lost**
-- The original held everything in React state and dropped it on refresh. This one
-  autosaves to `localStorage` after every card and offers to resume.
-- **Undo** in both card rounds. Previously a single misclick was unrecoverable
-  dozens of cards deep.
-
-**The failure path no longer punishes you**
-- The original fired a native `alert()` when you finished round 1 with fewer than
-  ten keepers, then threw away every answer and restarted with a fresh shuffle.
-- Now you get a recovery screen listing what you set aside, and you promote a few
-  to reach ten. Redoing the round is still offered, but it is a choice.
-
-**Faster to get through**
-- Keyboard shortcuts throughout: arrow keys or `1`/`2`/`3` to sort, `Backspace`
-  to undo.
-- Card animations shortened and made interruption-safe.
-
-**The results say more**
-- Every value carries a theme (Character, Growth, Relationships, and so on). The
-  original loaded that field and never used it. The results screen now shows how
-  your top ten cluster, and that breakdown is included in both exports.
-- Export as Markdown to the clipboard, as JSON, or via a proper print stylesheet.
-
-**Correctness and accessibility**
-- The shuffle uses Fisher-Yates. The original used `sort(() => Math.random() - 0.5)`,
-  which is measurably biased.
-- Semantic buttons, ARIA live regions, visible focus rings, `prefers-reduced-motion`,
-  and a skip link.
-- Light and dark themes that follow the system by default.
-- Fixed two string-concatenation bugs that rendered as `12in "This is Me" pile`
-  and `10/10selected`.
-
-**A tighter deck**
-- The original deck ran to 86 cards, many of which were the same idea worded
-  twice: *Acceptance* next to *Self-Acceptance*, *Loved* next to *Loving*,
-  *Health* next to *Fitness*, *Authority* next to *Power*. Sorting near-synonyms
-  is fatigue, not insight.
-- The deck is now **62**. Twenty-four cards were folded into the card they
-  duplicated, and every merged entry records what it absorbed in its `merged`
-  field, so nothing was silently dropped. A few labels were also clarified
-  (*Industry* became *Hard Work*, *Virtue* became *Integrity*).
-
-**Smaller**
-- Roughly 600 KB of JavaScript across ten chunks became three files and no
-  dependencies.
+See [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
